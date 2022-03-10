@@ -1,55 +1,52 @@
-
-var bola, position;
-var database;
+var bola,posicao,database;
 
 function setup(){
-  
- database = firebase.database();
- console.log(database);
+  database = firebase.database();
+  console.log(database);
+ 
   createCanvas(500,500);
 
-  bola = createSprite(150,150,10,10);
+  bola = createSprite(100,100,10,10);
   bola.shapeColor = "red";
 
-  var bolaPosition = database.ref('bola/position');
-  bolaPosition.on("value", readPosition,showError);
+  var bolaPosicao = database.ref('ball/position');
+  bolaPosicao.on("value",lerBanco,showError);
  
 }
 
 function draw(){
   background("white");
 
-    if(position !== undefined){
+    if(posicao !== undefined){
     if(keyDown(LEFT_ARROW)){
-     writePosition(-5,0);
+      escreverBanco(-5,0);
     }
     else if(keyDown(RIGHT_ARROW)){
-      writePosition(5,0);
+      escreverBanco(5,0);
     }
     else if(keyDown(UP_ARROW)){
-      writePosition(0,-5);
+      escreverBanco(0,-5);
     }
     else if(keyDown(DOWN_ARROW)){
-      writePosition(0,5);
+      escreverBanco(0,5);
     }
     drawSprites();
-    }
+  }
 }
 
-function writePosition(x,y){
-  database.ref('bola/position').set({
-    'x': position.x + x,
-    'y': position.y + y
-
-  })
+function lerBanco(data){
+    posicao = data.val();
+    bola.x = posicao.x;
+    bola.y = posicao.y;
 }
 
-function readPosition(data){
-  position = data.val();
-  bola.x = position.x;
-  bola.y = position.y;
+function escreverBanco(a,b){
+    database.ref('ball/position').set({
+      'x': posicao.x + a,
+      'y': posicao.y + b
+    })
 }
 
 function showError(){
-  console.log("Algo está errado no banco de dados");
+  console.log("Algo está errado");
 }
